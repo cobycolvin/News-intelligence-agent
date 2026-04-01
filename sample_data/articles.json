@@ -1,0 +1,52 @@
+[
+  {
+    "id": "art-001",
+    "title": "Shipping insurers raise war-risk premiums as Red Sea attacks continue",
+    "source": "Global Trade Monitor",
+    "date": "2026-03-20",
+    "url": "https://example.com/red-sea-premiums",
+    "snippet": "Insurance costs are climbing as carriers reroute around conflict-prone waters.",
+    "text": "Maritime insurers increased war-risk surcharges for vessels transiting near the Red Sea after additional drone and missile incidents. Carriers report longer voyages around the Cape of Good Hope, driving fuel spend, delivery delays, and freight volatility. Analysts say disruptions are now influencing retail inventory timelines in Europe and North America.",
+    "image_path": "sample_data/images/shipping.svg"
+  },
+  {
+    "id": "art-002",
+    "title": "US and EU discuss coordinated maritime escort expansion",
+    "source": "Policy Wire",
+    "date": "2026-03-24",
+    "url": "https://example.com/maritime-escort",
+    "snippet": "Officials are reviewing expanded naval coordination to protect trade corridors.",
+    "text": "Defense officials from the US and EU met to review an expanded escort framework for commercial shipping lanes. The proposal includes intelligence sharing, route deconfliction, and a rapid incident response protocol. Diplomats stressed that deterrence and convoy visibility may reduce successful attacks but acknowledged persistent escalation risk.",
+    "image_path": "sample_data/images/navy.svg"
+  },
+  {
+    "id": "art-003",
+    "title": "Semiconductor export controls tighten around advanced packaging equipment",
+    "source": "Tech Policy Daily",
+    "date": "2026-03-28",
+    "url": "https://example.com/semiconductor-controls",
+    "snippet": "New restrictions focus on advanced packaging and high-bandwidth memory tooling.",
+    "text": "Export authorities introduced tighter controls on advanced packaging systems and selected process software linked to high-performance computing supply chains. Industry groups warned of near-term compliance burden and potential bottlenecks for suppliers operating in multiple jurisdictions.",
+    "image_path": "sample_data/images/chips.svg"
+  },
+  {
+    "id": "art-004",
+    "title": "AI regulation draft introduces model audit and incident disclosure timelines",
+    "source": "Civic Compute News",
+    "date": "2026-03-25",
+    "url": "https://example.com/ai-regulation-draft",
+    "snippet": "A proposed framework would require risk audits, incident reporting, and transparency reports.",
+    "text": "Lawmakers released a draft AI accountability framework requiring annual third-party audits for high-impact models, mandatory incident disclosures within 72 hours, and standardized model cards for public-sector procurement. Industry stakeholders support harmonized reporting but dispute enforcement timelines.",
+    "image_path": "sample_data/images/ai-policy.svg"
+  },
+  {
+    "id": "art-005",
+    "title": "Freight forwarders report stable demand but volatile transit schedules",
+    "source": "Logistics Ledger",
+    "date": "2026-03-18",
+    "url": "https://example.com/freight-forwarders",
+    "snippet": "Demand remains resilient while rerouting pressure creates schedule unpredictability.",
+    "text": "Large freight forwarders said contract demand remains stable in Q1, but schedule reliability dropped as vessels diverted to avoid high-risk maritime zones. Procurement teams increased safety stock and switched some shipments to air freight to reduce stockout exposure.",
+    "image_path": "sample_data/images/container-port.svg"
+  }
+]

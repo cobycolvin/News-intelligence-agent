@@ -1,0 +1,76 @@
+from datetime import date
+from typing import List, Optional
+from pydantic import BaseModel, Field
+
+
+class NewsQuery(BaseModel):
+    query: str = Field(min_length=3)
+    max_articles: int = Field(default=5, ge=1, le=15)
+    topic: Optional[str] = None
+    date_from: Optional[date] = None
+    date_to: Optional[date] = None
+
+
+class ArticleSource(BaseModel):
+    id: str
+    title: str
+    source: str
+    date: str
+    url: str
+    image_path: Optional[str] = None
+
+
+class RankedArticle(ArticleSource):
+    relevance_score: float
+    snippet: str
+    cleaned_text: str
+
+
+class VisualInsight(BaseModel):
+    article_id: str
+    image_summary: str
+    detected_theme: str
+    relevance_to_article: str
+    notable_visual_elements: List[str]
+    confidence_score: float
+
+
+class EvidenceRef(BaseModel):
+    article_id: str
+    title: str
+    url: str
+
+
+class ReportSection(BaseModel):
+    heading: str
+    content: str
+    evidence: List[EvidenceRef] = Field(default_factory=list)
+
+
+class ConfidenceAssessment(BaseModel):
+    score: float
+    notes: str
+    uncertainty_factors: List[str] = Field(default_factory=list)
+
+
+class SynthesisInput(BaseModel):
+    query: NewsQuery
+    ranked_articles: List[RankedArticle]
+    visual_insights: List[VisualInsight]
+
+
+class FinalReport(BaseModel):
+    query: str
+    executive_summary: str
+    sections: List[ReportSection]
+    confidence: ConfidenceAssessment
+    sources: List[ArticleSource]
+    markdown_export: str
+    generated_at: str
+
+
+class PipelineResponse(BaseModel):
+    query: NewsQuery
+    ranked_articles: List[RankedArticle]
+    visual_insights: List[VisualInsight]
+    final_report: FinalReport

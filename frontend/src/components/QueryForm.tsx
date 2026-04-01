@@ -1,0 +1,31 @@
+import { useState } from 'react'
+
+interface Props {
+  onSubmit: (query: string, maxArticles: number) => Promise<void>
+  loading: boolean
+}
+
+export function QueryForm({ onSubmit, loading }: Props) {
+  const [query, setQuery] = useState('What are the latest developments in Red Sea shipping disruptions?')
+  const [maxArticles, setMaxArticles] = useState(5)
+
+  return (
+    <form
+      className="rounded-xl border border-slate-700 bg-slate-900 p-4 space-y-3"
+      onSubmit={(e) => {
+        e.preventDefault()
+        onSubmit(query, maxArticles)
+      }}
+    >
+      <h2 className="text-xl font-semibold">News Intelligence Query</h2>
+      <textarea className="w-full rounded-md bg-slate-800 p-3" rows={3} value={query} onChange={(e) => setQuery(e.target.value)} />
+      <div className="flex items-center gap-3">
+        <label className="text-sm">Articles</label>
+        <input type="number" min={1} max={10} className="w-20 rounded bg-slate-800 p-2" value={maxArticles} onChange={(e) => setMaxArticles(Number(e.target.value))} />
+        <button disabled={loading} className="rounded bg-cyan-500 px-4 py-2 font-medium text-slate-950 disabled:opacity-60">
+          {loading ? 'Analyzing...' : 'Run Pipeline'}
+        </button>
+      </div>
+    </form>
+  )
+}
