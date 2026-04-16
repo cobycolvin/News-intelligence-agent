@@ -46,4 +46,4 @@ Each report section contains evidence references (article title + URL), and the 
 
 ## Mode behavior
 - **Mock mode (`MOCK_MODE=true`)**: deterministic embeddings, visual findings, and synthesis text using local sample data.
-- **Local model mode (`MOCK_MODE=false`)**: sentence-transformers + Ollama path enabled (OpenCLIP-ready via vision provider abstraction).
+- **LLM mode (`MOCK_MODE=false`)**: sentence-transformers + provider-based synthesis (`openai` GPT or `ollama`) with schema-safe fallback.

@@ -4,6 +4,10 @@ __pycache__/
 .venv/
 backend/.venv/
 
+# pytest / temp cache
+.pytest_cache/
+backend/pytest-cache-files-*/
+
 # Node
 node_modules/
 dist/
