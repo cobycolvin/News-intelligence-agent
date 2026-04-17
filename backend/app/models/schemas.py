@@ -74,3 +74,18 @@ class PipelineResponse(BaseModel):
     ranked_articles: List[RankedArticle]
     visual_insights: List[VisualInsight]
     final_report: FinalReport
+
+
+class IngestionTaskRequest(BaseModel):
+    query: str = Field(min_length=3)
+    max_articles: int = Field(default=10, ge=1, le=50)
+
+
+class IngestionTaskResponse(BaseModel):
+    task_id: str
+    state: str
+    query: str
+    indexed_articles: int = 0
+    error: Optional[str] = None
+    created_at: str
+    updated_at: str

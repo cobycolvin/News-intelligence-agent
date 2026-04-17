@@ -7,6 +7,7 @@ Show end-to-end multi-agent pipeline with source transparency in under 5 minutes
 1. Backend running on port `8000`.
 2. Frontend running on port `5173`.
 3. `MOCK_MODE=true` for deterministic demo.
+   - **Optional live mode:** set `NEWS_API_KEY=<key>`, `LIVE_INGESTION_ENABLED=true`, and `MOCK_MODE=false` in `.env` to use real-time NewsAPI articles instead of sample data. Trigger ingestion via `POST /api/ingest` before the demo. See `README.md § 16a` for the full quick-start.
 
 ## Demo script
 1. Open `http://localhost:5173`.

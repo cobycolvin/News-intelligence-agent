@@ -2,3 +2,7 @@
 pythonpath = ["."]
 testpaths = ["tests"]
 addopts = "-p no:cacheprovider"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+	"integration: integration tests that may require external services",
+]

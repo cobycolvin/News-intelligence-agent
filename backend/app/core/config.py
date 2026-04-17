@@ -14,10 +14,23 @@ class Settings(BaseSettings):
 
     mock_mode: bool = True
     sample_data_path: str = "sample_data/articles.json"
+    live_ingestion_enabled: bool = False
+    news_api_key: Optional[str] = None
+    news_api_base_url: str = "https://newsapi.org/v2"
+    news_api_language: str = "en"
+    news_api_page_size: int = 30
+    ingestion_timeout_seconds: int = 12
+    ingestion_extract_full_text: bool = True
+    ingestion_article_timeout_seconds: int = 8
+    ingestion_placeholder_image_url: Optional[str] = "https://via.placeholder.com/1280x720?text=No+Image"
 
     embedding_provider: str = "local"
     embedding_model_name: str = "sentence-transformers/all-mpnet-base-v2"
     vector_db_path: str = "backend/.chroma"
+    vector_store_backend: str = "memory"
+    vector_store_database_url: Optional[str] = None
+    vector_store_table_name: str = "article_embeddings"
+    vector_store_dimension: int = 32
     max_articles_default: int = 5
 
     vision_provider: str = "local"
