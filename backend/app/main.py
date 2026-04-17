@@ -1,4 +1,6 @@
 import logging
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -18,4 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(router)
-app.mount("/sample_data", StaticFiles(directory="sample_data"), name="sample_data")
+sample_data_dir = Path(settings.resolved_sample_data_dir)
+if sample_data_dir.exists():
+    app.mount("/sample_data", StaticFiles(directory=str(sample_data_dir)), name="sample_data")
+else:
+    logging.warning("Sample data directory not found: %s", sample_data_dir)

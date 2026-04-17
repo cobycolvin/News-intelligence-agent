@@ -1,4 +1,7 @@
 from functools import lru_cache
+from pathlib import Path
+from typing import Optional
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -21,11 +24,30 @@ class Settings(BaseSettings):
     clip_model_name: str = "ViT-B-32"
     clip_pretrained: str = "laion2b_s34b_b79k"
 
-    synthesis_provider: str = "ollama"
+    synthesis_provider: str = "openai"
+    openai_base_url: str = "https://api.openai.com/v1"
+    openai_api_key: Optional[str] = None
+    openai_model: str = "gpt-4o-mini"
+
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3.1:8b"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+    @property
+    def project_root(self) -> Path:
+        return Path(__file__).resolve().parents[3]
+
+    @property
+    def resolved_sample_data_path(self) -> Path:
+        path = Path(self.sample_data_path)
+        if path.is_absolute():
+            return path
+        return self.project_root / path
+
+    @property
+    def resolved_sample_data_dir(self) -> Path:
+        return self.resolved_sample_data_path.parent
 
 
 @lru_cache

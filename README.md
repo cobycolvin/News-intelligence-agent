@@ -20,7 +20,7 @@ Modern news intelligence requires combining textual and visual signals, not just
 ## 4) System Architecture
 - **Frontend (React + TypeScript + Tailwind):** dashboard for query input, retrieval cards, visual findings, and report rendering.
 - **Backend (FastAPI):** API routes, orchestrator, agents, schemas, and service adapters.
-- **Data layer:** sample dataset (JSON + images), local vector ranking flow, optional Ollama provider.
+- **Data layer:** sample dataset (JSON + images), local vector ranking flow, optional OpenAI/Ollama synthesis providers.
 
 ```mermaid
 flowchart LR
@@ -43,16 +43,16 @@ F --> UI[Frontend Dashboard + Export]
 - Frontend: React, TypeScript, Vite, Tailwind, Vitest
 - Retrieval: sentence-transformers (`all-mpnet-base-v2`) with hash fallback
 - Vision: OpenCLIP-ready adapter pattern with deterministic mock inference
-- Synthesis: Ollama adapter + mock fallback
+- Synthesis: OpenAI GPT adapter, Ollama adapter, and mock fallback
 - Storage: local files, in-memory vector ranking (Chroma-ready config)
 
 ## 7) Free Local Setup
 This repository is designed to run **without paid APIs**.
 
-### Pretrained model defaults
+### Model defaults
 - Retrieval: `sentence-transformers/all-mpnet-base-v2`
 - Vision: OpenCLIP (`ViT-B-32`, `laion2b_s34b_b79k`)
-- Synthesis: Ollama local model (`llama3.1:8b`)
+- Synthesis: OpenAI GPT (`gpt-4o-mini`) or Ollama local model (`llama3.1:8b`)
 
 ### Ollama (Windows + Linux)
 1. Install Ollama from the official installer/package.
@@ -63,7 +63,7 @@ This repository is designed to run **without paid APIs**.
 4. Pull model:
    - `ollama pull llama3.1:8b`
 
-If you skip Ollama or local models, set `MOCK_MODE=true`.
+If you skip OpenAI/Ollama providers, set `MOCK_MODE=true`.
 
 ## 8) Repository Structure
 ```text
@@ -99,7 +99,7 @@ multimodal-news-intelligence-agent/
 - Python 3.11+
 - Node.js 20+
 - npm 10+
-- (Optional) Ollama for local synthesis model
+- (Optional) OpenAI API key for GPT synthesis or Ollama for local synthesis model
 
 ## 10) Environment Variables
 Copy `.env.example` to `.env`. All variables:
@@ -118,11 +118,14 @@ Copy `.env.example` to `.env`. All variables:
 | VISION_PROVIDER | Optional | local | vision provider mode |
 | CLIP_MODEL_NAME | Optional | ViT-B-32 | OpenCLIP model name |
 | CLIP_PRETRAINED | Optional | laion2b_s34b_b79k | OpenCLIP weights |
-| SYNTHESIS_PROVIDER | Optional | ollama | synthesis backend |
+| SYNTHESIS_PROVIDER | Optional | openai | synthesis backend (`openai` or `ollama`) |
+| OPENAI_BASE_URL | Optional | https://api.openai.com/v1 | OpenAI API base URL |
+| OPENAI_API_KEY | Optional | sk-... | OpenAI API key used for GPT synthesis |
+| OPENAI_MODEL | Optional | gpt-4o-mini | OpenAI model for synthesis |
 | OLLAMA_BASE_URL | Optional | http://localhost:11434 | local Ollama endpoint |
 | OLLAMA_MODEL | Optional | llama3.1:8b | synthesis model |
 
-In mock mode, Ollama/model vars may be omitted.
+In mock mode, OpenAI/Ollama model vars may be omitted.
 
 ## 11) Local Setup for Windows
 ### Windows (PowerShell)
