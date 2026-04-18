@@ -1,20 +1,20 @@
 <<<<<<< Updated upstream
-fastapi==0.115.0
-uvicorn[standard]==0.30.6
-pydantic==2.9.2
-pydantic-settings==2.6.0
-numpy==2.1.2
-httpx==0.27.2
-python-dotenv==1.0.1
-psycopg[binary]==3.2.9
+fastapi
+uvicorn6
+pydantic
+pydantic-settings
+numpy
+httpx
+python-dotenv
+psycopg
 # Optional for future persistent vector DB work. Left out of core install because
 # this pin conflicts with current numpy/Python versions in local environments.
 # chromadb==0.5.5
-sentence-transformers==3.1.1
-open_clip_torch==2.26.1
-Pillow==10.4.0
-pytest==8.3.3
-pytest-asyncio==0.24.0
+sentence-transformers
+open_clip_torch
+Pillow
+pytest
+pytest-asyncio
 =======
 fastapi
 uvicorn
