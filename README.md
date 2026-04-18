@@ -113,8 +113,21 @@ Copy `.env.example` to `.env`. All variables:
 | FRONTEND_ORIGIN | Optional | http://localhost:5173 | CORS origin |
 | MOCK_MODE | Optional | true | enables deterministic mock mode |
 | SAMPLE_DATA_PATH | Optional | sample_data/articles.json | local dataset path |
+| LIVE_INGESTION_ENABLED | Optional | false | enables live ingestion routes and news provider fetch |
+| NEWS_API_KEY | Optional |  | key used for live article ingestion |
+| NEWS_API_BASE_URL | Optional | https://newsapi.org/v2 | live news provider base URL |
+| NEWS_API_LANGUAGE | Optional | en | language filter for live ingestion |
+| NEWS_API_PAGE_SIZE | Optional | 30 | max upstream fetch size per query |
+| INGESTION_TIMEOUT_SECONDS | Optional | 12 | timeout for news provider requests |
+| INGESTION_EXTRACT_FULL_TEXT | Optional | true | enables article URL text extraction fallback |
+| INGESTION_ARTICLE_TIMEOUT_SECONDS | Optional | 8 | timeout for article page extraction requests |
+| INGESTION_PLACEHOLDER_IMAGE_URL | Optional | https://via.placeholder.com/1280x720?text=No+Image | fallback image URL when source image is missing |
 | EMBEDDING_MODEL_NAME | Optional | sentence-transformers/all-mpnet-base-v2 | retrieval embedding model |
 | VECTOR_DB_PATH | Optional | backend/.chroma | local vector db path |
+| VECTOR_STORE_BACKEND | Optional | memory | vector backend selection (`memory` or `pgvector`) |
+| VECTOR_STORE_DATABASE_URL | Optional |  | PostgreSQL connection string for pgvector mode |
+| VECTOR_STORE_TABLE_NAME | Optional | article_embeddings | table used for embedding persistence |
+| VECTOR_STORE_DIMENSION | Optional | 32 | embedding vector dimension for pgvector table |
 | VISION_PROVIDER | Optional | local | vision provider mode |
 | CLIP_MODEL_NAME | Optional | ViT-B-32 | OpenCLIP model name |
 | CLIP_PRETRAINED | Optional | laion2b_s34b_b79k | OpenCLIP weights |
@@ -210,6 +223,32 @@ MOCK_MODE=true
 ```
 Then run backend + frontend normally. The pipeline uses `sample_data/articles.json` and deterministic visual + synthesis outputs.
 
+## 16a) Running with Live News Ingestion
+
+To switch from sample data to real-time NewsAPI.org articles, set these three variables in `.env`:
+
+```env
+NEWS_API_KEY=<your_newsapi_key>
+LIVE_INGESTION_ENABLED=true
+INGESTION_EXTRACT_FULL_TEXT=false   # omit newspaper3k scraping for speed
+```
+
+Then start the backend and trigger ingestion:
+
+```bash
+# kick off a background ingestion job
+curl -X POST http://localhost:8000/api/ingest \
+     -H "Content-Type: application/json" \
+     -d '{"query": "AI breakthroughs", "max_articles": 10}'
+
+# poll until status == "completed"
+curl http://localhost:8000/api/status/<task_id>
+```
+
+Once completed, run `POST /api/analyze` as normal — the retrieved articles will be drawn from the live-ingested vectors.
+
+Get a free NewsAPI key at <https://newsapi.org/register>. The free tier allows 100 requests/day.
+
 ## 17) Running Tests
 Backend:
 ```bash
@@ -250,6 +289,8 @@ curl -X POST http://localhost:8000/api/analyze \
 ## 20) API Overview
 - `GET /api/health` → health status
 - `POST /api/analyze` → full pipeline response
+- `POST /api/ingest` → queue live ingestion task
+- `GET /api/status/{task_id}` → ingestion job status
 
 See `docs/api.md` for request/response details.
 
@@ -257,7 +298,8 @@ See `docs/api.md` for request/response details.
 See `docs/troubleshooting.md` for Windows/Linux fixes including Python path, venv, npm, ports, CORS, and model availability issues.
 
 ## 22) Future Improvements
-- Live web retrieval adapter with news API and web extraction.
+- Additional provider adapters beyond current News API ingestion.
+- Full PostgreSQL article metadata persistence and hybrid SQL+vector retrieval.
 - Full OpenCLIP inference with image embeddings and zero-shot labels.
 - Chroma persistent vector indexing for larger corpora.
 - PDF export endpoint.
