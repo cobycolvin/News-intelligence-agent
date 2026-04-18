@@ -44,6 +44,39 @@ def test_synthesis_mock_report_sections():
     report = asyncio.run(agent.run(SynthesisInput(query=NewsQuery(query="test"), ranked_articles=ranked, visual_insights=visual)))
     assert report.executive_summary
     assert len(report.sections) >= 5
+    assert report.sections[0].heading == "Current Status"
+    assert "Current status" not in report.sections[0].content
+
+
+def test_synthesis_in_depth_report_adds_extra_section():
+    agent = SynthesisAgent(use_mock=True)
+    ranked = [
+        RankedArticle(
+            id="a1", title="A", source="S1", date="2026-01-02", url="https://x1", image_path=None,
+            relevance_score=0.9, snippet="ceasefire talks ongoing", cleaned_text="ceasefire talks ongoing and military strikes paused"
+        ),
+        RankedArticle(
+            id="a2", title="B", source="S2", date="2026-01-01", url="https://x2", image_path=None,
+            relevance_score=0.8, snippet="navy activity near shipping lane", cleaned_text="navy activity near shipping lane"
+        ),
+    ]
+    visual = [
+        VisualInsight(
+            article_id="a1", image_summary="summary", detected_theme="theme", relevance_to_article="high",
+            notable_visual_elements=["x"], confidence_score=0.8
+        )
+    ]
+    report = asyncio.run(
+        agent.run(
+            SynthesisInput(
+                query=NewsQuery(query="test", report_depth="in_depth"),
+                ranked_articles=ranked,
+                visual_insights=visual,
+            )
+        )
+    )
+    headings = [section.heading for section in report.sections]
+    assert "Where Sources Agree and Differ" in headings
 
 
 def test_synthesis_llm_structured_report_used():

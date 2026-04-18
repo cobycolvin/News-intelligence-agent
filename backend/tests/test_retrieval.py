@@ -41,6 +41,16 @@ class _FakeIngestionService:
                 "snippet": "Duplicate article",
                 "text": "Duplicate should be skipped due to URL.",
             },
+            {
+                "id": "blocked-1",
+                "title": "Blocked source should not be indexed",
+                "source": "BadSource",
+                "date": "2026-04-16",
+                "url": "https://www.globalresearch.ca/bad-source",
+                "image_path": None,
+                "snippet": "Blocked article",
+                "text": "This should be filtered.",
+            },
         ]
 
 
@@ -59,6 +69,7 @@ def test_retrieval_ingests_live_articles_without_duplicate_urls():
     assert added == 1
     output = agent.run(NewsQuery(query="maritime corridor", max_articles=10))
     assert any(article.url == "https://example.com/live/maritime" for article in output)
+    assert all("globalresearch.ca" not in article.url for article in output)
 
 
 class _TrackingVectorStore:

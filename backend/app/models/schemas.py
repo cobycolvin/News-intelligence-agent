@@ -1,11 +1,12 @@
 from datetime import date
-from typing import List, Optional
+from typing import List, Literal, Optional
 from pydantic import BaseModel, Field
 
 
 class NewsQuery(BaseModel):
     query: str = Field(min_length=3)
     max_articles: int = Field(default=5, ge=1, le=15)
+    report_depth: Literal["brief", "in_depth"] = "brief"
     topic: Optional[str] = None
     date_from: Optional[date] = None
     date_to: Optional[date] = None

@@ -1,6 +1,5 @@
-<<<<<<< Updated upstream
 fastapi
-uvicorn6
+uvicorn
 pydantic
 pydantic-settings
 numpy
@@ -15,18 +14,3 @@ open_clip_torch
 Pillow
 pytest
 pytest-asyncio
-=======
-fastapi
-uvicorn
-pydantic
-pydantic-settings
-numpy
-httpx
-python-dotenv
-chromadb
-sentence-transformers
-open_clip_torch
-Pillow
-pytest
-pytest-asyncio
->>>>>>> Stashed changes

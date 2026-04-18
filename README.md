@@ -33,6 +33,7 @@ F --> UI[Frontend Dashboard + Export]
 
 ## 5) Multi-Agent Workflow
 1. User submits a natural-language query and max article count.
+   Users can choose a quick brief or an in-depth report mode.
 2. Retrieval Agent ranks source articles by semantic relevance.
 3. Vision Agent analyzes article visual context and returns structured fields.
 4. Synthesis Agent combines text + visual evidence into report sections.
@@ -42,7 +43,7 @@ F --> UI[Frontend Dashboard + Export]
 - Backend: FastAPI, Pydantic, NumPy, pytest
 - Frontend: React, TypeScript, Vite, Tailwind, Vitest
 - Retrieval: sentence-transformers (`all-mpnet-base-v2`) with hash fallback
-- Vision: OpenCLIP-ready adapter pattern with deterministic mock inference
+- Vision: heuristic fallback plus OpenAI-compatible multimodal analysis
 - Synthesis: OpenAI GPT adapter, Ollama adapter, and mock fallback
 - Storage: local files, in-memory vector ranking (Chroma-ready config)
 
@@ -51,7 +52,7 @@ This repository is designed to run **without paid APIs**.
 
 ### Model defaults
 - Retrieval: `sentence-transformers/all-mpnet-base-v2`
-- Vision: OpenCLIP (`ViT-B-32`, `laion2b_s34b_b79k`)
+- Vision: local heuristic fallback or OpenAI-compatible multimodal vision
 - Synthesis: OpenAI GPT (`gpt-4o-mini`) or Ollama local model (`llama3.1:8b`)
 
 ### Ollama (Windows + Linux)
@@ -135,6 +136,7 @@ Copy `.env.example` to `.env`. All variables:
 | OPENAI_BASE_URL | Optional | https://api.openai.com/v1 | OpenAI API base URL |
 | OPENAI_API_KEY | Optional | sk-... | OpenAI API key used for GPT synthesis |
 | OPENAI_MODEL | Optional | gpt-4o-mini | OpenAI model for synthesis |
+| OPENAI_VISION_MODEL | Optional | gemini-3.1-flash-lite-preview | overrides the multimodal vision model; falls back to `OPENAI_MODEL` when omitted |
 | OLLAMA_BASE_URL | Optional | http://localhost:11434 | local Ollama endpoint |
 | OLLAMA_MODEL | Optional | llama3.1:8b | synthesis model |
 
@@ -248,6 +250,22 @@ curl http://localhost:8000/api/status/<task_id>
 Once completed, run `POST /api/analyze` as normal — the retrieved articles will be drawn from the live-ingested vectors.
 
 Get a free NewsAPI key at <https://newsapi.org/register>. The free tier allows 100 requests/day.
+
+## 16b) Running Gemini Vision
+
+To enable real multimodal image analysis with a Gemini OpenAI-compatible endpoint, set:
+
+```env
+MOCK_MODE=false
+VISION_PROVIDER=openai
+OPENAI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai
+OPENAI_API_KEY=<your_gemini_key>
+OPENAI_MODEL=gemini-3.1-flash-lite-preview
+# optional: keep vision on a separate model
+OPENAI_VISION_MODEL=gemini-3.1-flash-lite-preview
+```
+
+When `VISION_PROVIDER=local`, the backend uses heuristic visual summaries. When `VISION_PROVIDER=openai`, it downloads the article image server-side and sends it to the configured multimodal model.
 
 ## 17) Running Tests
 Backend:

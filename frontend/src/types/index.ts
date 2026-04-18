@@ -1,6 +1,7 @@
 export interface NewsQuery {
   query: string
   max_articles: number
+  report_depth: 'brief' | 'in_depth'
   topic?: string
   date_from?: string
   date_to?: string

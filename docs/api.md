@@ -15,12 +15,14 @@ Response:
 Runs full pipeline: retrieval → vision → synthesis.
 
 When `LIVE_INGESTION_ENABLED=true`, retrieval automatically fetches live articles before ranking (synchronous). When disabled, uses sample data only.
+When `VISION_PROVIDER=openai`, the vision step downloads article images and sends them to the configured multimodal model. When `VISION_PROVIDER=local`, it uses heuristic fallback analysis.
 
 Request body:
 ```json
 {
   "query": "What are the latest developments in Red Sea shipping disruptions?",
   "max_articles": 5,
+  "report_depth": "in_depth",
   "topic": "logistics",
   "date_from": "2026-03-01",
   "date_to": "2026-03-31"

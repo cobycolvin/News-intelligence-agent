@@ -8,6 +8,7 @@ from app.services.embedding_service import EmbeddingService
 from app.services.news_ingestion_service import NewsIngestionService
 from app.services.sample_data import SampleDataRepository
 from app.services.vector_store import InMemoryVectorStore, VectorStore
+from app.utils.source_quality import is_source_allowed, source_quality_score
 from app.utils.text import clean_article_text
 
 logger = logging.getLogger(__name__)
@@ -45,6 +46,9 @@ class RetrievalAgent:
         embeddings = self.embedding_service.embed(texts)
         added = 0
         for row, emb in zip(rows, embeddings):
+            if not is_source_allowed(row["url"]):
+                logger.info("Skipping blocked source during indexing: %s", row["url"])
+                continue
             if row["url"] in self._urls:
                 continue
             self.vector_store.upsert(row["id"], emb)
@@ -65,7 +69,8 @@ class RetrievalAgent:
     def run(self, query: NewsQuery) -> List[RankedArticle]:
         self.ingest_query(query)
         query_embedding = self.embedding_service.embed([query.query])[0]
-        matches = self.vector_store.search(query_embedding, query.max_articles)
+        candidate_count = min(max(query.max_articles * 4, query.max_articles), max(len(self._cache), query.max_articles))
+        matches = self.vector_store.search(query_embedding, candidate_count)
         results: List[RankedArticle] = []
         for article_id, score in matches:
             raw = self._cache[article_id]
@@ -83,4 +88,9 @@ class RetrievalAgent:
                     cleaned_text=cleaned,
                 )
             )
-        return results
+        results.sort(key=self._ranking_sort_key, reverse=True)
+        return results[: query.max_articles]
+
+    def _ranking_sort_key(self, article: RankedArticle) -> tuple[float, str]:
+        adjusted_score = article.relevance_score + source_quality_score(article.url)
+        return (adjusted_score, article.date)

@@ -4,6 +4,9 @@ from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+ENV_FILE_PATH = PROJECT_ROOT / ".env"
+
 
 class Settings(BaseSettings):
     app_name: str = "Multimodal News Intelligence Agent"
@@ -41,15 +44,16 @@ class Settings(BaseSettings):
     openai_base_url: str = "https://api.openai.com/v1"
     openai_api_key: Optional[str] = None
     openai_model: str = "gpt-4o-mini"
+    openai_vision_model: Optional[str] = None
 
     ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "llama3.1:8b"
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(env_file=ENV_FILE_PATH, env_file_encoding="utf-8", extra="ignore")
 
     @property
     def project_root(self) -> Path:
-        return Path(__file__).resolve().parents[3]
+        return PROJECT_ROOT
 
     @property
     def resolved_sample_data_path(self) -> Path:

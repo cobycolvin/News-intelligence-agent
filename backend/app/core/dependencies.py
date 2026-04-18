@@ -9,6 +9,7 @@ from app.services.embedding_service import EmbeddingService
 from app.services.ingestion_tasks import IngestionTaskStore
 from app.services.news_ingestion_service import NewsIngestionService
 from app.services.openai_client import OpenAIClient
+from app.services.openai_vision_client import OpenAIVisionClient
 from app.services.ollama_client import OllamaClient
 from app.services.orchestrator import NewsPipelineOrchestrator
 from app.services.sample_data import SampleDataRepository
@@ -52,7 +53,22 @@ def get_orchestrator() -> NewsPipelineOrchestrator:
         live_ingestion_enabled=settings.live_ingestion_enabled,
         vector_store=vector_store,
     )
-    vision = VisionAgent(mock_mode=settings.mock_mode)
+    vision_llm_client = None
+    vision_provider = settings.vision_provider.strip().lower()
+    if not settings.mock_mode and vision_provider == "openai":
+        if settings.openai_api_key:
+            vision_llm_client = OpenAIVisionClient(
+                api_key=settings.openai_api_key,
+                model=settings.openai_vision_model or settings.openai_model,
+                base_url=settings.openai_base_url,
+                project_root=settings.project_root,
+            )
+        else:
+            logger.warning("VISION_PROVIDER=openai but OPENAI_API_KEY is missing. Falling back to heuristic vision.")
+    elif vision_provider not in {"local", "openai"}:
+        logger.warning("Unknown VISION_PROVIDER '%s'. Falling back to heuristic vision.", settings.vision_provider)
+
+    vision = VisionAgent(mock_mode=settings.mock_mode, llm_client=vision_llm_client)
     llm_client = None
     if not settings.mock_mode:
         provider = settings.synthesis_provider.strip().lower()

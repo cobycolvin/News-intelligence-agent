@@ -14,7 +14,7 @@ class NewsPipelineOrchestrator:
 
     async def run(self, query: NewsQuery) -> PipelineResponse:
         ranked_articles = self.retrieval_agent.run(query)
-        visual_insights = self.vision_agent.run(ranked_articles)
+        visual_insights = await self.vision_agent.run(ranked_articles)
         synthesis_input = SynthesisInput(query=query, ranked_articles=ranked_articles, visual_insights=visual_insights)
         final_report = await self.synthesis_agent.run(synthesis_input)
         return PipelineResponse(

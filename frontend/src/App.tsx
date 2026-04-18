@@ -11,11 +11,11 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const runQuery = async (query: string, maxArticles: number) => {
+  const runQuery = async (query: string, maxArticles: number, reportDepth: 'brief' | 'in_depth') => {
     setLoading(true)
     setError(null)
     try {
-      const response = await analyzeNews({ query, max_articles: maxArticles })
+      const response = await analyzeNews({ query, max_articles: maxArticles, report_depth: reportDepth })
       setData(response)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Unknown error')
