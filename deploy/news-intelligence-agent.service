@@ -1,0 +1,22 @@
+[Unit]
+Description=News Intelligence Agent FastAPI Backend
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/News-intelligence-agent
+EnvironmentFile=/home/ubuntu/News-intelligence-agent/.env
+Environment=APP_ENV=production
+Environment=APP_HOST=127.0.0.1
+Environment=APP_PORT=8000
+Environment=PYTHON_BIN=/home/ubuntu/News-intelligence-agent/.venv/bin/python
+ExecStart=/home/ubuntu/News-intelligence-agent/deploy/start_backend.sh
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

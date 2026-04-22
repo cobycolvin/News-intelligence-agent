@@ -17,7 +17,15 @@ class _FakeRetrievalAgent:
         self.ingestion_service = object() if live_enabled else None
         self._indexed_articles = indexed_articles
 
-    def ingest_query(self, query: NewsQuery) -> int:
+    def ingest_query(self, query: NewsQuery, progress_callback=None) -> int:
+        if progress_callback is not None:
+            progress_callback(
+                state="indexing_articles",
+                message="Fake indexing in progress.",
+                progress_current=1,
+                progress_total=1,
+                meta={"fake": True},
+            )
         return self._indexed_articles
 
     def run(self, query: NewsQuery):
@@ -60,7 +68,9 @@ def test_ingest_route_creates_task_when_live_ingestion_is_enabled():
     data = response.json()
     assert data["task_id"]
     assert data["query"] == "Maritime disruptions"
-    assert data["state"] in {"queued", "running", "completed"}
+    assert data["state"] in {"queued", "warming_embeddings", "completed"}
+    assert "progress_current" in data
+    assert "progress_total" in data
     assert status_response.status_code == 200
     assert status_response.json()["state"] == "completed"
 
@@ -98,3 +108,4 @@ def test_ingest_route_marks_task_failed_when_no_articles_indexed():
     assert data["state"] == "failed"
     assert data["indexed_articles"] == 0
     assert data["error"] == "No new live articles were indexed for the query."
+    assert data["progress_percent"] == 100.0

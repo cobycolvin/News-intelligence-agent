@@ -11,9 +11,11 @@ ENV_FILE_PATH = PROJECT_ROOT / ".env"
 class Settings(BaseSettings):
     app_name: str = "Multimodal News Intelligence Agent"
     app_env: str = "development"
+    log_level: str = "INFO"
     app_host: str = "0.0.0.0"
     app_port: int = 8000
     frontend_origin: str = "http://localhost:5173"
+    frontend_origins: Optional[str] = None
 
     mock_mode: bool = True
     sample_data_path: str = "sample_data/articles.json"
@@ -23,8 +25,12 @@ class Settings(BaseSettings):
     news_api_language: str = "en"
     news_api_page_size: int = 30
     ingestion_timeout_seconds: int = 12
-    ingestion_extract_full_text: bool = True
+    ingestion_extract_full_text: bool = False
     ingestion_article_timeout_seconds: int = 8
+    ingestion_full_text_max_articles: int = 6
+    ingestion_full_text_max_workers: int = 4
+    ingestion_use_newspaper: bool = False
+    ingestion_max_runtime_seconds: int = 180
     ingestion_placeholder_image_url: Optional[str] = "https://via.placeholder.com/1280x720?text=No+Image"
 
     embedding_provider: str = "local"
@@ -54,6 +60,35 @@ class Settings(BaseSettings):
     @property
     def project_root(self) -> Path:
         return PROJECT_ROOT
+
+    @property
+    def app_env_normalized(self) -> str:
+        return self.app_env.strip().lower() or "development"
+
+    @property
+    def is_production(self) -> bool:
+        return self.app_env_normalized == "production"
+
+    @property
+    def cors_allowed_origins(self) -> list[str]:
+        if self.frontend_origins:
+            parsed_origins = [
+                origin.rstrip("/")
+                for origin in (item.strip() for item in self.frontend_origins.split(","))
+                if origin
+            ]
+            if parsed_origins:
+                return parsed_origins
+        origin = (self.frontend_origin or "").strip() or "http://localhost:5173"
+        return [origin.rstrip("/")]
+
+    @property
+    def env_file_path(self) -> Path:
+        return ENV_FILE_PATH
+
+    @property
+    def news_api_key_present(self) -> bool:
+        return bool((self.news_api_key or "").strip())
 
     @property
     def resolved_sample_data_path(self) -> Path:

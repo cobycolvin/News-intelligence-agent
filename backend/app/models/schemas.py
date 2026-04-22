@@ -1,5 +1,5 @@
 from datetime import date
-from typing import List, Literal, Optional
+from typing import Any, List, Literal, Optional
 from pydantic import BaseModel, Field
 
 
@@ -88,5 +88,10 @@ class IngestionTaskResponse(BaseModel):
     query: str
     indexed_articles: int = 0
     error: Optional[str] = None
+    message: Optional[str] = None
+    progress_current: int = 0
+    progress_total: int = 0
+    progress_percent: Optional[float] = None
+    meta: dict[str, Any] = Field(default_factory=dict)
     created_at: str
     updated_at: str

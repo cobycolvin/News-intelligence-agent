@@ -26,6 +26,7 @@ def get_ingestion_task_store() -> IngestionTaskStore:
 @lru_cache
 def get_orchestrator() -> NewsPipelineOrchestrator:
     settings = get_settings()
+    news_api_key = (settings.news_api_key or "").strip() or None
     repository = SampleDataRepository(str(settings.resolved_sample_data_path))
     embedding_service = EmbeddingService(settings.embedding_model_name, mock_mode=settings.mock_mode)
     vector_store = create_vector_store(
@@ -35,17 +36,25 @@ def get_orchestrator() -> NewsPipelineOrchestrator:
         dimension=settings.vector_store_dimension,
     )
     ingestion_service = None
-    if settings.live_ingestion_enabled and settings.news_api_key:
+    if settings.live_ingestion_enabled and news_api_key:
         ingestion_service = NewsIngestionService(
-            api_key=settings.news_api_key,
+            api_key=news_api_key,
             base_url=settings.news_api_base_url,
             language=settings.news_api_language,
             page_size=settings.news_api_page_size,
             timeout_seconds=settings.ingestion_timeout_seconds,
             extract_full_text=settings.ingestion_extract_full_text,
             article_timeout_seconds=settings.ingestion_article_timeout_seconds,
+            full_text_max_articles=settings.ingestion_full_text_max_articles,
+            full_text_max_workers=settings.ingestion_full_text_max_workers,
+            use_newspaper=settings.ingestion_use_newspaper,
+            max_runtime_seconds=settings.ingestion_max_runtime_seconds,
             placeholder_image_url=settings.ingestion_placeholder_image_url,
         )
+    elif settings.live_ingestion_enabled:
+        logger.warning("LIVE_INGESTION_ENABLED=true but NEWS_API_KEY is missing or empty. /api/ingest will return 503.")
+    elif news_api_key:
+        logger.info("NEWS_API_KEY is set but LIVE_INGESTION_ENABLED=false. Live ingestion remains disabled.")
     retrieval = RetrievalAgent(
         repository,
         embedding_service,
