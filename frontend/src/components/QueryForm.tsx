@@ -6,7 +6,7 @@ interface Props {
 }
 
 export function QueryForm({ onSubmit, loading }: Props) {
-  const [query, setQuery] = useState('What are the latest developments in Red Sea shipping disruptions?')
+  const [query, setQuery] = useState('')
   const [maxArticles, setMaxArticles] = useState(5)
   const [reportDepth, setReportDepth] = useState<'brief' | 'in_depth'>('brief')
 
